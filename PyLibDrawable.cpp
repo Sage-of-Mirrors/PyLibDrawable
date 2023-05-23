@@ -4,6 +4,7 @@
 #include <math.hpp>
 #include <libdrawable.hpp>
 #include <drawable.hpp>
+#include <skeleton.hpp>
 
 namespace py = pybind11;
 
@@ -23,6 +24,26 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def_readwrite("y", &UVector4::y)
         .def_readwrite("z", &UVector4::z)
         .def_readwrite("w", &UVector4::w);
+    py::class_<UMatrix4>(m, "UMatrix4")
+        .def(py::init<>())
+        .def_readwrite("r0", &UMatrix4::r0)
+        .def_readwrite("r1", &UMatrix4::r1)
+        .def_readwrite("r2", &UMatrix4::r2)
+        .def_readwrite("r3", &UMatrix4::r3);
+
+    py::class_<UJoint>(m, "UJoint")
+        .def(py::init<>())
+        .def_readwrite("Name", &UJoint::Name)
+        .def_readwrite("Parent", &UJoint::Parent)
+        .def_readwrite("Children", &UJoint::Children)
+        .def("GetRotation", &UJoint::GetRotation)
+        .def("GetTranslation", &UJoint::GetTranslation)
+        .def("GetScale", &UJoint::GetScale)
+        .def("GetInverseBindMatrix", &UJoint::GetInverseBindMatrix);
+    py::class_<USkeleton>(m, "USkeleton")
+        .def(py::init<>())
+        .def_readwrite("Root", &USkeleton::Root)
+        .def_readwrite("FlatSkeleton", &USkeleton::FlatSkeleton);
 
     py::class_<UVertex>(m, "UVertex")
         .def(py::init<>())
@@ -51,7 +72,8 @@ PYBIND11_MODULE(pylibdrawable, m) {
     py::class_<UDrawable>(m, "UDrawable")
         .def(py::init<>())
         .def_readwrite("FileName", &UDrawable::FileName)
-        .def_readwrite("Lods", &UDrawable::Lods);
+        .def_readwrite("Lods", &UDrawable::Lods)
+        .def_readwrite("Skeleton", &UDrawable::Skeleton);
 
     m.def("ImportYdr", &ImportYdr, py::return_value_policy::take_ownership);
 }
