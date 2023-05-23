@@ -36,6 +36,8 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def_readwrite("TexCoord", &UVertex::TexCoord);
     py::class_<UGeometry>(m, "UGeometry")
         .def(py::init<>())
+        .def("GetVertexPositionArray", &UGeometry::GetVertexPositionArray)
+        .def("GetIndexArray", &UGeometry::GetIndexArray)
         .def_readwrite("Vertices", &UGeometry::Vertices)
         .def_readwrite("Indices", &UGeometry::Indices);
     py::class_<UModel>(m, "UModel")
