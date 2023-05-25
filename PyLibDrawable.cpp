@@ -39,7 +39,8 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def("GetRotation", &UJoint::GetRotation)
         .def("GetTranslation", &UJoint::GetTranslation)
         .def("GetScale", &UJoint::GetScale)
-        .def("GetInverseBindMatrix", &UJoint::GetInverseBindMatrix);
+        .def("GetInverseBindMatrix", &UJoint::GetInverseBindMatrix)
+        .def("GetBindMatrix", &UJoint::GetBindMatrix);
     py::class_<USkeleton>(m, "USkeleton")
         .def(py::init<>())
         .def_readwrite("Root", &USkeleton::Root)
@@ -58,6 +59,8 @@ PYBIND11_MODULE(pylibdrawable, m) {
     py::class_<UGeometry>(m, "UGeometry")
         .def(py::init<>())
         .def("GetVertexPositionArray", &UGeometry::GetVertexPositionArray)
+        .def("GetVertexBlendIndexArray", &UGeometry::GetVertexBlendIndexArray)
+        .def("GetVertexBlendWeightArray", &UGeometry::GetVertexBlendWeightArray)
         .def("GetIndexArray", &UGeometry::GetIndexArray)
         .def_readwrite("Vertices", &UGeometry::Vertices)
         .def_readwrite("Indices", &UGeometry::Indices);
