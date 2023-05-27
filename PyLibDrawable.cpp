@@ -5,6 +5,7 @@
 #include <libdrawable.hpp>
 #include <drawable.hpp>
 #include <skeleton.hpp>
+#include <drawabledictionary.hpp>
 
 namespace py = pybind11;
 
@@ -76,7 +77,13 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def(py::init<>())
         .def_readwrite("FileName", &UDrawable::FileName)
         .def_readwrite("Lods", &UDrawable::Lods)
-        .def_readwrite("Skeleton", &UDrawable::Skeleton);
+        .def_readwrite("Skeleton", &UDrawable::Skeleton)
+        .def_readwrite("DictionaryHash", &UDrawable::DictionaryHash);
+
+    py::class_<UDrawableDictionary>(m, "UDrawableDictionary")
+        .def(py::init<>())
+        .def_readwrite("Drawables", &UDrawableDictionary::Drawables);
 
     m.def("ImportYdr", &ImportYdr, py::return_value_policy::take_ownership);
+    m.def("ImportYdd", &ImportYdd, py::return_value_policy::take_ownership);
 }
