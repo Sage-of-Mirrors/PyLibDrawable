@@ -59,12 +59,85 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def_readwrite("TexCoord", &UVertex::TexCoord);
     py::class_<UGeometry>(m, "UGeometry")
         .def(py::init<>())
-        .def("GetVertexPositionArray", &UGeometry::GetVertexPositionArray)
-        .def("GetVertexBlendIndexArray", &UGeometry::GetVertexBlendIndexArray)
-        .def("GetVertexBlendWeightArray", &UGeometry::GetVertexBlendWeightArray)
-        .def("GetIndexArray", &UGeometry::GetIndexArray)
-        .def_readwrite("Vertices", &UGeometry::Vertices)
-        .def_readwrite("Indices", &UGeometry::Indices);
+        .def("GetVertexPositionArray", [](const UGeometry& g, int index = 0) {
+            std::vector<std::array<float, 3>> positions;
+
+            for (UVertex* v : g.Vertices) {
+                positions.push_back({
+                    v->Position[index].x,
+                    v->Position[index].y,
+                    v->Position[index].z
+                });
+            }
+
+            return positions;
+        })
+        .def("GetVertexNormalArray", [](const UGeometry& g, int index = 0) {
+             std::vector<std::array<float, 3>> normals;
+
+             for (UVertex* v : g.Vertices) {
+                 normals.push_back({
+                     v->Normal[index].x,
+                     v->Normal[index].y,
+                     v->Normal[index].z
+                 });
+             }
+
+             return normals;
+        })
+        .def("GetVertexBlendIndexArray", [](const UGeometry& g, int index = 0) {
+            std::vector<std::array<uint32_t, 4>> blendIndices;
+
+            for (UVertex* v : g.Vertices) {
+                blendIndices.push_back({
+                    static_cast<uint32_t>(v->BlendIndex[index].x),
+                    static_cast<uint32_t>(v->BlendIndex[index].y),
+                    static_cast<uint32_t>(v->BlendIndex[index].z),
+                    static_cast<uint32_t>(v->BlendIndex[index].w)
+                });
+            }
+
+            return blendIndices;
+        })
+        .def("GetVertexBlendWeightArray", [](const UGeometry& g, int index = 0) {
+            std::vector<std::array<float, 4>> blendWeights;
+
+            for (UVertex* v : g.Vertices) {
+                blendWeights.push_back({
+                    v->BlendIndex[index].x,
+                    v->BlendIndex[index].y,
+                    v->BlendIndex[index].z,
+                    v->BlendIndex[index].w
+                });
+            }
+
+            return blendWeights;
+        })
+        .def("GetVertexTexCoordArray", [](const UGeometry& g, int index = 0) {
+            std::vector<std::array<float, 2>> texCoords;
+
+            for (UVertex* v : g.Vertices) {
+                texCoords.push_back({
+                    v->TexCoord[index].x,
+                    v->TexCoord[index].y
+                });
+            }
+
+            return texCoords;
+        })
+        .def("GetIndexArray", [](const UGeometry& g) {
+            std::vector<std::array<uint32_t, 3>> indices;
+
+            for (int i = 2; i < g.Indices.size(); i += 3) {
+                indices.push_back({
+                    g.Indices[i - 2],
+                    g.Indices[i - 1],
+                    g.Indices[i]
+                });
+            }
+
+            return indices;
+        });
     py::class_<UModel>(m, "UModel")
         .def(py::init<>())
         .def_readwrite("Geometries", &UModel::Geometries);
