@@ -113,6 +113,20 @@ PYBIND11_MODULE(pylibdrawable, m) {
 
             return blendWeights;
         })
+        .def("GetVertexColorArray", [](const UGeometry& g, int index = 0) {
+            std::vector<std::array<float, 4>> colors;
+
+            for (UVertex* v : g.Vertices) {
+                colors.push_back({
+                    v->Color[index].x,
+                    v->Color[index].y,
+                    v->Color[index].z,
+                    v->Color[index].w
+                });
+            }
+
+            return colors;
+        })
         .def("GetVertexTexCoordArray", [](const UGeometry& g, int index = 0) {
             std::vector<std::array<float, 2>> texCoords;
 
@@ -137,7 +151,15 @@ PYBIND11_MODULE(pylibdrawable, m) {
             }
 
             return indices;
-        });
+            })
+        .def_readonly("PositionsCount", &UGeometry::PositionsCount)
+        .def_readonly("NormalsCount", &UGeometry::NormalsCount)
+        .def_readonly("TangentsCount", &UGeometry::TangentsCount)
+        .def_readonly("BinormalsCount", &UGeometry::BinormalsCount)
+        .def_readonly("BlendIndicesCount", &UGeometry::BlendIndicesCount)
+        .def_readonly("BlendWeightsCount", &UGeometry::BlendWeightsCount)
+        .def_readonly("ColorsCount", &UGeometry::ColorsCount)
+        .def_readonly("TexCoordsCount", &UGeometry::TexCoordsCount);
     py::class_<UModel>(m, "UModel")
         .def(py::init<>())
         .def_readwrite("Geometries", &UModel::Geometries);
