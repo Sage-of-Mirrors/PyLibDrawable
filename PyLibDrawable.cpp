@@ -32,6 +32,26 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def_readwrite("r2", &UMatrix4::r2)
         .def_readwrite("r3", &UMatrix4::r3);
 
+    py::class_<UShaderUniform>(m, "UShaderUniform")
+        .def(py::init<>())
+        .def_readwrite("Name", &UShaderUniform::Name)
+        .def_readwrite("Hash", &UShaderUniform::Hash)
+        .def_readwrite("Data", &UShaderUniform::Data);
+    py::class_<UShader>(m, "UShader")
+        .def(py::init<>())
+        .def_readwrite("Name", &UShader::Name)
+        .def_readwrite("Hash", &UShader::Hash)
+        .def_readwrite("Uniforms", &UShader::Uniforms)
+        .def("GetUniforms", [](const UShader& s) {
+            std::map<std::string, std::vector<float>> uniforms;
+
+            for (UShaderUniform* u : s.Uniforms) {
+                uniforms[u->Name] = u->Data;
+            }
+
+            return uniforms;
+        });
+
     py::class_<UJoint>(m, "UJoint")
         .def(py::init<>())
         .def_readwrite("Name", &UJoint::Name)
@@ -159,7 +179,10 @@ PYBIND11_MODULE(pylibdrawable, m) {
         .def_readonly("BlendIndicesCount", &UGeometry::BlendIndicesCount)
         .def_readonly("BlendWeightsCount", &UGeometry::BlendWeightsCount)
         .def_readonly("ColorsCount", &UGeometry::ColorsCount)
-        .def_readonly("TexCoordsCount", &UGeometry::TexCoordsCount);
+        .def_readonly("TexCoordsCount", &UGeometry::TexCoordsCount)
+        .def("GetShader", [](const UGeometry& g) {
+            return g.Shader;
+        }, py::return_value_policy::reference);
     py::class_<UModel>(m, "UModel")
         .def(py::init<>())
         .def_readwrite("Geometries", &UModel::Geometries);
